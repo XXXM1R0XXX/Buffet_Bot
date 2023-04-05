@@ -6,9 +6,6 @@ from keyboard import keyboard
 import json
 loop = asyncio.get_event_loop()
 dp = Dispatcher(bot, loop=loop)
-dictionary = {1: 'Хот-дог',
-              2: 'Чебурек',
-              3: 'Пицца'}
 @dp.message_handler(commands=['start'])
 async def send_welcome(message: types.Message):
     await bot.send_message(message.chat.id,"тест",reply_markup=keyboard)
