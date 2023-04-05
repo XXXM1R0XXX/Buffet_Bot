@@ -4,6 +4,7 @@ from main import bot
 from aiogram import types, Dispatcher
 from keyboard import keyboard
 import json
+import time
 loop = asyncio.get_event_loop()
 dp = Dispatcher(bot, loop=loop)
 @dp.message_handler(commands=['start'])
@@ -21,13 +22,18 @@ async def buy_process(web_app_message):
 @dp.message_handler(content_types="web_app_data") #получаем отправленные данные
 async def answer(webAppMes):
    res=json.loads(webAppMes.web_app_data.data)
+   res1=json.loads(str(webAppMes.chat))
+   ser=json.loads(str(webAppMes))
    print(webAppMes) #вся информация о сообщении
    print(webAppMes.web_app_data.data) #конкретно то что мы передали в бота
-   await bot.send_message(webAppMes.chat.id, text=f"получили инофрмацию из веб-приложения: {res}")
+   print(time.gmtime(ser["date"]))
+   #await bot.send_message(webAppMes.chat.id, text=f"получили инофрмацию из веб-приложения: {res}")
    #отправляем сообщение в ответ на отправку данных из веб-приложения
-   await bot.send_message(chat_id=919865126, text="Вы  получили новый заказ")
+   await bot.send_message(chat_id=919865126, text=f"Вы  получили новый заказ @{res1['username']}")
    itogo=0
+   s="Вы создали заказ: \n"
    for i in range(1,len(res)+1):
        itogo+=int(res[str(i)]['amount'])*res[str(i)]['price']
-       await bot.send_message(webAppMes.chat.id, text=f"{res[str(i)]['title']}: {res[str(i)]['amount']}шт {res[str(i)]['price']}руб")
-   await bot.send_message(webAppMes.chat.id, text=f"Итого к оплате: {itogo}руб")
+       s+=f"{res[str(i)]['title']}: {res[str(i)]['amount']}шт {res[str(i)]['price']}руб\n"
+   s+=f"Итого к оплате: {itogo}руб"
+   await bot.send_message(webAppMes.chat.id, text=s)
